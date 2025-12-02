@@ -2,19 +2,17 @@ using UnityEngine;
 
 public class FoodItem : MonoBehaviour
 {
-    // ScriptableObjectへの参照を保持
-    public FoodItemData foodData; 
-    
-    // インスペクターから設定できる、この食材の重力スケール
-    public float gravityScale = 1.0f; // デフォルト値を1に設定
+    // ScriptableObjectへの参照を保持 (インスペクターで設定)
+    public FoodItemData foodData;
 
-    private GameDirector gameDirector; 
+    // インスペクターから設定できる、この食材の重力スケール
+    [Tooltip("Rigidbody2Dに適用する重力スケール")]
+    public float gravityScale = 1.0f;
 
     void Start()
     {
-        gameDirector = FindObjectOfType<GameDirector>();
-        
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
+
         if (rb != null)
         {
             rb.gravityScale = gravityScale;
@@ -29,16 +27,21 @@ public class FoodItem : MonoBehaviour
         {
             GameDirector director = GameDirector.Instance;
 
-            if (gameDirector != null)
+            if (director != null && foodData != null)
             {
-                gameDirector.EatFood(foodData.fullnessValue, foodData.scoreValue);
+                // 満腹度、スコア、特殊アイテムのタイプをすべて渡す
+                director.EatFood(
+                    foodData.fullnessValue,
+                    foodData.scoreValue,
+                    foodData.whatspecialItem
+                );
             }
-            
-            Destroy(gameObject); 
+
+            // 食材を消費したので、このゲームオブジェクトを削除
+            Destroy(gameObject);
         }
         else
         {
-            // プレイヤー以外のオブジェクトと衝突した場合のログ
             Debug.Log("プレイヤー以外のオブジェクトと衝突しました。タグ: " + other.tag);
         }
     }

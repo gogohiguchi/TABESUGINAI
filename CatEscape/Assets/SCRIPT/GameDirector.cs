@@ -1,130 +1,327 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement; 
-using TMPro; 
+using UnityEngine.SceneManagement;
+using TMPro; // TextMeshProを使用するために必要
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameDirector : MonoBehaviour
 {
+    // === UI/ステータス変数 ===
     public GameObject fullnessGauge;
     public TextMeshProUGUI scoreText;
+
+    // ★ 追加：満腹度数値を表示するためのTextMeshProUGUIの参照 ★
+    public TextMeshProUGUI fullnessValueText;
+
     public float score = 0;
     public bool isGameOver = false;
-    public float fullnessDecreaseRate = 1.5f; // 1秒あたりの減少量を設定
 
-    // 満腹ゲージの現在の値と最大値を管理する変数を追加
-    private float currentFullness = 0;
-    private const float MAX_FULLNESS = 150f;
+    [Header("満腹度設定")]
+    public float fullnessDecreaseRate = 1.5f;
+    private float currentFullness = 40f;
+    private const float MAX_FULLNESS = 200f;
 
-    // シングルトンパターンを適用
+    // ... (特殊効果設定、フラグの宣言は省略) ...
+    public float timeStopDuration = 5f;
+    public float boostDuration = 3f;
+    public int boostScoreBonus = 300;
+    public float boostFullnessMultiplier = 1.5f;
+    public string gameOverSceneName = "GameOver";
+
+    public bool isFullnessDrainStopped = false;
+    public bool isFullnessChangeStopped = false;
+    public bool isBoostActive = false;
+
+    private Coroutine activeSpecialEffectCoroutine;
+
+    [Header("出現設定")]
+    public List<FoodItemData> allFoodItems;
+
+    // === シングルトンパターン ===
     public static GameDirector Instance { get; private set; }
+    // ... (Awake, Start の内容は省略) ...
     public void Awake()
     {
-        // 既にインスタンスが存在する場合、この新しいインスタンスを破棄する
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
             return;
         }
 
-        // このインスタンスをシングルトンにする
         Instance = this;
-
-        // シーンを切り替えても破棄されないようにする
         DontDestroyOnLoad(this.gameObject);
     }
 
     void Start()
     {
-        // ゲージの見た目を初期状態の0にする（内部のcurrentFullnessも0なので、ここは表示用）
-        this.fullnessGauge.GetComponent<Image>().fillAmount = 0.0f;
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        isFullnessDrainStopped = false;
+        isFullnessChangeStopped = false;
+        isBoostActive = false;
+
+        if (fullnessGauge != null)
+        {
+            this.fullnessGauge.GetComponent<Image>().fillAmount = 0.0f;
+        }
     }
-    
+
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ゲームシーンに戻ったときにゲームの状態をリセット
         if (scene.name == "GameScene")
         {
-            // すべてのゲーム変数をリセットする
             score = 0;
-            currentFullness = 0;
+            currentFullness = 40f;
             isGameOver = false;
+            isFullnessDrainStopped = false;
+            isFullnessChangeStopped = false;
+            isBoostActive = false;
 
-            // UIの参照を再取得して更新する
-            fullnessGauge = GameObject.Find("fullnessGauge");
+            fullnessGauge = GameObject.Find("FullnessGauge")?.gameObject;
             scoreText = GameObject.Find("ScoreText")?.GetComponent<TextMeshProUGUI>();
-            
-            if (fullnessGauge != null)
+
+            // ★ 修正：FullnessValueTextの参照を取得 ★
+            // ヒエラルキー内に "FullnessValueText" という名前のTextMeshProオブジェクトがあることを想定
+            fullnessValueText = GameObject.Find("FullnessValueText")?.GetComponent<TextMeshProUGUI>();
+
+            UpdateFullnessAndScore();
+
+            if (fullnessGauge == null)
             {
-                fullnessGauge.GetComponent<Image>().fillAmount = 0.0f;
-            }
-            if (scoreText != null)
-            {
-                scoreText.text = "0";
+                Debug.LogWarning("満腹ゲージ (FullnessGauge) がシーン 'GameScene' で見つかりませんでした。");
             }
         }
     }
 
-    // 食材を食べた時に呼び出すメソッド
-    public void EatFood(float fullnessValue, int scoreValue)
+    // ... (EatFood, GetRandomFoodItem, HandleSpecialItem の内容は省略) ...
+    public void EatFood(float fullnessValue, int scoreValue, string specialType)
     {
-        // インスタンスが正しく設定されているか確認
-        if (Instance != this)
+        if (isGameOver) return;
+
+        if (isFullnessChangeStopped && specialType != "TimeStop")
         {
+            score += scoreValue;
+            UpdateFullnessAndScore();
             return;
         }
 
-        if (isGameOver) return;
+        if (HandleSpecialItem(specialType, fullnessValue, scoreValue))
+        {
+            if (specialType == "MaxOut") return;
+        }
 
-        // 満腹ゲージの内部値を増やす
-        currentFullness += fullnessValue;
+        float finalFullness = fullnessValue;
+        int finalScore = scoreValue;
 
-        // 最大値を超えないようにクランプする
+        if (isBoostActive)
+        {
+            finalFullness *= boostFullnessMultiplier;
+            finalScore = (int)(finalScore * boostFullnessMultiplier) + boostScoreBonus;
+        }
+
+        if (!isFullnessChangeStopped)
+        {
+            currentFullness += finalFullness;
+        }
+
+        score += finalScore;
+
+        UpdateFullnessAndScore();
+
+        if (currentFullness >= MAX_FULLNESS)
+        {
+            isGameOver = true;
+            Debug.Log("Game Over! 満腹度が上限に達しました。Score: " + score);
+
+            PlayerPrefs.SetInt("SCORE", (int)score);
+            SceneManager.LoadScene(gameOverSceneName);
+            return;
+        }
+    }
+
+    public FoodItemData GetRandomFoodItem()
+    {
+        if (allFoodItems == null || allFoodItems.Count == 0)
+        {
+            Debug.LogError("FoodItemData リストが空です。");
+            return null;
+        }
+
+        float totalWeight = 0f;
+        foreach (var item in allFoodItems)
+        {
+            if (item.dropWeight > 0)
+            {
+                totalWeight += item.dropWeight;
+            }
+        }
+
+        float randomPoint = Random.Range(0f, totalWeight);
+        float currentWeight = 0f;
+
+        foreach (var item in allFoodItems)
+        {
+            if (item.dropWeight > 0)
+            {
+                currentWeight += item.dropWeight;
+
+                if (randomPoint <= currentWeight)
+                {
+                    return item;
+                }
+            }
+        }
+
+        return allFoodItems[0];
+    }
+
+    private bool HandleSpecialItem(string type, float baseFullness, int baseScore)
+    {
+        if (activeSpecialEffectCoroutine != null)
+        {
+            StopCoroutine(activeSpecialEffectCoroutine);
+            if (isFullnessDrainStopped) isFullnessDrainStopped = false;
+            if (isFullnessChangeStopped) isFullnessChangeStopped = false;
+            if (isBoostActive) isBoostActive = false;
+        }
+
+        switch (type)
+        {
+            case "TimeStop":
+                activeSpecialEffectCoroutine = StartCoroutine(TimeStopEffect(timeStopDuration));
+                return true;
+
+            case "Boost":
+                activeSpecialEffectCoroutine = StartCoroutine(BoostEffect(boostDuration));
+                return true;
+
+            case "MaxOut":
+                MaxOutEffect(4000);
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private IEnumerator TimeStopEffect(float duration)
+    {
+        Debug.Log($"特殊効果: TimeStop (満腹ゲージ変動停止) {duration}秒開始");
+        isFullnessDrainStopped = true;
+        isFullnessChangeStopped = true;
+
+        yield return new WaitForSeconds(duration);
+
+        isFullnessDrainStopped = false;
+        isFullnessChangeStopped = false;
+        Debug.Log("特殊効果: TimeStop 終了");
+    }
+
+    private IEnumerator BoostEffect(float duration)
+    {
+        Debug.Log($"特殊効果: Boost (効果中、満腹度とスコア増加) {duration}秒開始");
+        isBoostActive = true;
+
+        yield return new WaitForSeconds(duration);
+
+        isBoostActive = false;
+        Debug.Log("特殊効果: Boost 終了");
+    }
+
+    private void MaxOutEffect(int bonusScore)
+    {
+        score += bonusScore;
+        currentFullness = MAX_FULLNESS;
+
+        Debug.Log("特殊効果: MaxOut発動！即ゲームオーバーです。");
+
+        isGameOver = true;
+        PlayerPrefs.SetInt("SCORE", (int)score);
+
+        if (!string.IsNullOrEmpty(gameOverSceneName))
+        {
+            SceneManager.LoadScene(gameOverSceneName);
+        }
+        else
+        {
+            Debug.LogError("Game Over Scene Name が設定されていません！");
+        }
+    }
+
+    // --- 状態更新ヘルパーメソッド ---
+    private void UpdateFullnessAndScore()
+    {
         currentFullness = Mathf.Clamp(currentFullness, 0, MAX_FULLNESS);
 
-        // UIゲージを更新（内部値を0-1の範囲に変換して表示）
+        // UIゲージの更新と色変化
         if (fullnessGauge != null)
         {
-            fullnessGauge.GetComponent<Image>().fillAmount = currentFullness / MAX_FULLNESS;
+            Image gaugeImage = fullnessGauge.GetComponent<Image>();
+            if (gaugeImage != null)
+            {
+                // 満腹度の値に基づき色を決定するロジック
+                Color targetColor = Color.white;
+
+                if (currentFullness <= 29f || currentFullness >= 160f)
+                {
+                    targetColor = Color.red;
+                }
+
+                gaugeImage.fillAmount = currentFullness / MAX_FULLNESS;
+                gaugeImage.color = targetColor;
+            }
         }
-        // スコアを加算
-        score += scoreValue;
 
         // スコア表示を更新
         if (scoreText != null)
         {
-            scoreText.text = "" + score;
+            scoreText.text = score.ToString();
         }
 
-        // 満腹ゲージが満タンになったかチェック
-        if (currentFullness >= MAX_FULLNESS)
+        // ★ 追加：満腹度数値を更新 ★
+        if (fullnessValueText != null)
         {
-            isGameOver = true;
-            Debug.Log("Game Over! Your Score: " + score);
-
-            // 最終スコアを保存
-            PlayerPrefs.SetInt("SCORE", (int)score);
-
-            // ゲームオーバー画面へ遷移
-            SceneManager.LoadScene("GameOver");
+            // 小数点以下を切り捨てて整数で表示
+            fullnessValueText.text = Mathf.FloorToInt(currentFullness).ToString();
         }
+        // ★ 変更ここまで ★
     }
-    
-    // Update is called once per frame
+
+    // --- Update ---
     void Update()
     {
         if (isGameOver) return;
 
-        // 時間経過で満腹ゲージの内部値を減らす
-        currentFullness -= fullnessDecreaseRate * Time.deltaTime;
-
-        // ゲージがマイナスにならないようにクランプする
-        currentFullness = Mathf.Clamp(currentFullness, 0, MAX_FULLNESS);
-
-        // UIゲージを更新
-        if (fullnessGauge != null)
+        // 1. 左右キーによる満腹度減少 (操作コスト)
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
+            Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
         {
-            fullnessGauge.GetComponent<Image>().fillAmount = currentFullness / MAX_FULLNESS;
+            if (!isFullnessChangeStopped)
+            {
+                currentFullness -= 1.5f;
+            }
         }
+
+        // 2. 満腹ゲージ減少 (時間コスト)
+        if (!isFullnessDrainStopped)
+        {
+            currentFullness -= fullnessDecreaseRate * Time.deltaTime;
+        }
+
+        // 3. 満腹度が0以下でゲームオーバー
+        if (currentFullness <= 0)
+        {
+            currentFullness = 0;
+            isGameOver = true;
+            Debug.Log("Game Over! 満腹度が0になりました。");
+
+            PlayerPrefs.SetInt("SCORE", (int)score);
+            SceneManager.LoadScene(gameOverSceneName);
+            return;
+        }
+
+        // 4. UI更新
+        UpdateFullnessAndScore();
     }
 }
