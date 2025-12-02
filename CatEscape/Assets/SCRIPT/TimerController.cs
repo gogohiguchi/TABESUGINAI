@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro; // TextMeshProを使用するために必要
+using UnityEngine.SceneManagement; // ★ シーン遷移のために追加
 
 public class TimerController : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class TimerController : MonoBehaviour
     [Header("シーン設定")]
     [Tooltip("ゲームオーバー時に遷移するシーンの名前")]
     [SerializeField]
-    private string gameOverSceneName = "GameOverScene";
+    private string gameOverSceneName = "GameOver"; // インスペクターで設定可能
 
     // === プライベート変数 ===
 
@@ -57,6 +58,8 @@ public class TimerController : MonoBehaviour
             {
                 currentTime = 0f; // 念のため時間を0に固定
                 isTimerRunning = false; // タイマーを停止
+
+                // ★ ここでシーン遷移を呼び出す
                 GameOver();
             }
         }
@@ -66,10 +69,20 @@ public class TimerController : MonoBehaviour
     private void GameOver()
     {
         Debug.Log("🎉 ゲームオーバー！時間がなくなりました。");
-        // ここにゲームオーバー画面への遷移、時間停止、スコア表示などの
-        // 実際のゲームオーバー処理を記述します。
 
-        // 例: Time.timeScale = 0f; // ゲーム全体を停止する場合
+        // ★ 追記: ゲームオーバーシーンへ遷移する
+        if (!string.IsNullOrEmpty(gameOverSceneName))
+        {
+            // シーンをロードする
+            SceneManager.LoadScene(gameOverSceneName);
+        }
+        else
+        {
+            Debug.LogError("GameOverSceneNameが設定されていません。インスペクターでシーン名を設定してください。");
+        }
+
+        // シーン遷移前にゲーム全体の時間を停止したい場合はコメントアウトを解除
+        // Time.timeScale = 0f;
     }
 
     // 外部からタイマーをリセットしたい場合のために公開
