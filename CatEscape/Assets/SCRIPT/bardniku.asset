@@ -15,3 +15,5 @@ MonoBehaviour:
   foodName: "\u3068\u308A\u306B\u304F"
   fullnessValue: 35
   scoreValue: 300
+  whatspecialItem: TimeStop
+  dropWeight: 2

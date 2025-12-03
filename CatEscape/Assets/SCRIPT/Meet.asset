@@ -15,3 +15,5 @@ MonoBehaviour:
   foodName: "\u8089"
   fullnessValue: 50
   scoreValue: 400
+  whatspecialItem: 
+  dropWeight: 10
