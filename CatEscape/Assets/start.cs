@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneChanger : MonoBehaviour
+public class ChangeScene : MonoBehaviour
 {
-    public void GoToNextScene()
+    public void OnClickNextScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("GameScene");
+        // 例: SceneManager.LoadScene("GameScene");
     }
 }
