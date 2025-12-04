@@ -1926,12 +1926,12 @@ MonoBehaviour:
   isGameOver: 0
   fullnessDecreaseRate: 1.5
   timeStopDuration: 1
-  boostDuration: 10
+  boostDuration: 5
   boostScoreBonus: 500
   boostFullnessMultiplier: 1.5
   gameOverSceneName: GameOver
-  isFullnessDrainStopped: 1
-  isFullnessChangeStopped: 1
+  isFullnessDrainStopped: 0
+  isFullnessChangeStopped: 0
   isBoostActive: 0
   allFoodItems: []
 --- !u!4 &1804605517
