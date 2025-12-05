@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: f673ba3a19655c241aee6094ff102181
+guid: 59af6bf799a03574ca37571efcb21c3e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7272514425686870430
-    second: igusuri_0
+      213: -7724459985831467646
+    second: mini_dot (40)_0
+  - first:
+      213: 5124851832449849188
+    second: mini_dot (40)_1
+  - first:
+      213: -7105808344600087577
+    second: mini_dot (40)_2
+  - first:
+      213: 7567109123418483330
+    second: mini_dot (40)_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,30 +131,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: igusuri_0
+      name: mini_dot (40)_0
       rect:
         serializedVersion: 2
-        x: 13
-        y: 6
-        width: 22
-        height: 33
+        x: 0
+        y: 5
+        width: 50
+        height: 22
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +149,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 266b70949a6d21b90800000000000000
-      internalID: -7272514425686870430
+      spriteID: 285ebce91943dc490800000000000000
+      internalID: -7724459985831467646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mini_dot (40)_1
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 27
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 467dea7c6912f1740800000000000000
+      internalID: 5124851832449849188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mini_dot (40)_2
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 27
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e3fa1275f8136d90800000000000000
+      internalID: -7105808344600087577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mini_dot (40)_3
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 27
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ae9fdc7a5c30960800000000000000
+      internalID: 7567109123418483330
       vertices: []
       indices: 
       edges: []
@@ -169,8 +228,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      igusuri_0: -7272514425686870430
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

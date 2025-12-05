@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4084614048070377220}
   - component: {fileID: 8215777597815218856}
   m_Layer: 0
-  m_Name: nikukuku
+  m_Name: boonmeet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: f9cf0d203d15696478e76cde2da6a942, type: 3}
+  m_Sprite: {fileID: -7724459985831467646, guid: 59af6bf799a03574ca37571efcb21c3e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -168,7 +168,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.5, y: 0.22}
     newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

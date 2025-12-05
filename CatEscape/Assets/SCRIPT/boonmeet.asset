@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3fda52336584a94aa7924bb5fa39704, type: 3}
-  m_Name: Meet
+  m_Name: boonmeet
   m_EditorClassIdentifier: 
-  foodName: "\u8089"
+  foodName: "\u9AA8\u4ED8\u304D\u8089"
   fullnessValue: 50
-  scoreValue: 400
+  scoreValue: 500
   whatspecialItem: 
+  prefab: {fileID: 8016918283728963868, guid: a58f2ea285486c947af5f6b9cb95c459, type: 3}
   dropWeight: 10

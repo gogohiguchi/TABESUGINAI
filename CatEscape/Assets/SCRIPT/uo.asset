@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3fda52336584a94aa7924bb5fa39704, type: 3}
-  m_Name: Sakana
+  m_Name: uo
   m_EditorClassIdentifier: 
   foodName: "\u5207\u308A\u8EAB"
-  fullnessValue: 0
+  fullnessValue: 5
   scoreValue: 500
-  whatspecialItem: TimeStop
-  prefab: {fileID: 8016918283728963868, guid: 3794da5f36b605349b8df546e894aebc, type: 3}
+  whatspecialItem: Boost
+  prefab: {fileID: 8016918283728963868, guid: d774d262845c90d4a81c81bc006d61d3, type: 3}
   dropWeight: 1.145142e+12

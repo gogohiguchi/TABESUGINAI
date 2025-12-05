@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3fda52336584a94aa7924bb5fa39704, type: 3}
-  m_Name: bardniku
+  m_Name: onion
   m_EditorClassIdentifier: 
-  foodName: "\u3068\u308A\u306B\u304F"
-  fullnessValue: 35
-  scoreValue: 300
-  whatspecialItem: TimeStop
-  dropWeight: 2
+  foodName: "\u305F\u307E\u306D\u304E"
+  fullnessValue: 0
+  scoreValue: 0
+  whatspecialItem: MaxOut
+  prefab: {fileID: 8016918283728963868, guid: 84436db542fbbf448a68ca7691242cb5, type: 3}
+  dropWeight: 0.1

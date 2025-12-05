@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 85396939f2b86994f96338fa3119828f
+guid: e9e8190b7622f3f4f84aa83441d32b10
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1219191545362126289
-    second: "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-12-05 092329_0"
+      213: -2518560453644762856
+    second: okusuri_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-12-05 092329_0"
+      name: okusuri_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
+        x: 14
+        y: 6
+        width: 20
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f2ae781cfbf841fe0800000000000000
-      internalID: -1219191545362126289
+      spriteID: 811482f7c964c0dd0800000000000000
+      internalID: -2518560453644762856
       vertices: []
       indices: 
       edges: []
@@ -156,8 +156,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      "\u30B9\u30AF\u30EA\u30FC\u30F3\u30B7\u30E7\u30C3\u30C8 2025-12-05 092329_0": -1219191545362126289
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

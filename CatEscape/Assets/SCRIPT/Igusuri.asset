@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Igusuri
   m_EditorClassIdentifier: 
   foodName: "\u80C3\u85AC"
-  fullnessValue: -25
-  scoreValue: 20
-  whatspecialItem: Boost
-  dropWeight: 2
+  fullnessValue: -20
+  scoreValue: 25
+  whatspecialItem: 
+  prefab: {fileID: 8277973968619082939, guid: 78fab2dcbbb3af744b160226b0869f9b, type: 3}
+  dropWeight: 10

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4084614048070377220}
   - component: {fileID: 8215777597815218856}
   m_Layer: 0
-  m_Name: kyabetu
+  m_Name: steak
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,12 +78,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 6002463028397491486, guid: 767dbc5b39753d6479c792ab599d33d9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f9cf0d203d15696478e76cde2da6a942, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.41, y: 0.34}
+  m_Size: {x: 0.5, y: 0.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddefc182210179149960c47d2c450657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  foodData: {fileID: 11400000, guid: 312b1564d519533419b71f549b3780e2, type: 2}
+  foodData: {fileID: 11400000, guid: 083ac839034885d40927f7c5e5e6e670, type: 2}
   gravityScale: 1
 --- !u!50 &-4084614048070377220
 Rigidbody2D:
@@ -168,8 +168,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.41, y: 0.34}
-    newSize: {x: 0.41, y: 0.34}
+    oldSize: {x: 0.5, y: 0.5}
+    newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0

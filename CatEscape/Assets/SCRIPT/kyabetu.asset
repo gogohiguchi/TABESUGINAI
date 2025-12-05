@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3fda52336584a94aa7924bb5fa39704, type: 3}
-  m_Name: Salad
+  m_Name: kyabetu
   m_EditorClassIdentifier: 
-  foodName: "\u30B5\u30E9\u30C0"
+  foodName: "\u30AD\u30E3\u30D9\u30C4"
   fullnessValue: 20
   scoreValue: 150
-  whatspecialItem: 
-  dropWeight: 2
+  whatspecialItem: Boost
+  prefab: {fileID: 8016918283728963868, guid: 9c391a641554ddd4e9106f391f96cf50, type: 3}
+  dropWeight: 10
