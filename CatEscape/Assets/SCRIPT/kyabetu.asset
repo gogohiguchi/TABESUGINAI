@@ -15,6 +15,6 @@ MonoBehaviour:
   foodName: "\u30AD\u30E3\u30D9\u30C4"
   fullnessValue: 20
   scoreValue: 150
-  whatspecialItem: Boost
+  whatspecialItem: 
   prefab: {fileID: 8016918283728963868, guid: 9c391a641554ddd4e9106f391f96cf50, type: 3}
   dropWeight: 10

@@ -12,20 +12,23 @@ public class GameDirector : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI fullnessValueText;
 
+    // ★ 修正：ブースト用とストップ用で個別にTextを管理 ★
+    public TextMeshProUGUI boostStatusText;
+    public TextMeshProUGUI timeStopStatusText;
+
     public float score = 0;
     public bool isGameOver = false;
 
-    // ★ 視覚効果用の変数 ★
+    // 視覚効果用の変数
     [Header("視覚効果")]
     private Camera mainCamera;
     private SpriteRenderer playerRenderer;
     private Color originalCameraColor = Color.black;
     private Color originalPlayerColor = Color.white;
 
-    // ★ 修正：コルーチン変数を独立させる ★
+    // コルーチン変数を独立させる
     private Coroutine timeStopCoroutine;
     private Coroutine boostCoroutine;
-    // ----------------------
 
     [Header("満腹度設定")]
     public float fullnessDecreaseRate = 1.5f;
@@ -89,7 +92,6 @@ public class GameDirector : MonoBehaviour
             isFullnessChangeStopped = false;
             isBoostActive = false;
 
-            // コルーチン変数を初期化（念のため）
             timeStopCoroutine = null;
             boostCoroutine = null;
 
@@ -106,6 +108,14 @@ public class GameDirector : MonoBehaviour
             {
                 Debug.LogError("UI Error: 'FullnessValueText' がシーンで見つかりませんでした。");
             }
+
+            // ★ 修正：Boost用とTimeStop用のテキスト参照を取得し、初期化 ★
+            boostStatusText = GameObject.Find("BoostStatusText")?.GetComponent<TextMeshProUGUI>();
+            timeStopStatusText = GameObject.Find("TimeStopStatusText")?.GetComponent<TextMeshProUGUI>();
+
+            if (boostStatusText != null) boostStatusText.text = "";
+            if (timeStopStatusText != null) timeStopStatusText.text = "";
+            // --------------------------------------------------------
 
             // 視覚効果用の参照を取得し、元の色を保存 (リセット) 
             mainCamera = Camera.main;
@@ -125,7 +135,7 @@ public class GameDirector : MonoBehaviour
                 }
             }
 
-            ResetVisualEffects(); // 念のため実行
+            ResetVisualEffects();
             UpdateFullnessAndScore();
 
             if (fullnessGauge == null)
@@ -150,8 +160,6 @@ public class GameDirector : MonoBehaviour
         {
             if (specialType == "MaxOut") return;
         }
-
-        // ... (スコア・満腹度の計算ロジックは変更なし) ...
 
         float finalFullness = fullnessValue;
         int finalScore = scoreValue;
@@ -190,8 +198,6 @@ public class GameDirector : MonoBehaviour
             return null;
         }
 
-        // ... (重み付き抽選ロジックは変更なし) ...
-
         float totalWeight = 0f;
         foreach (var item in allFoodItems)
         {
@@ -225,12 +231,12 @@ public class GameDirector : MonoBehaviour
         switch (type)
         {
             case "TimeStop":
-                // 既にTimeStopが動いているなら停止し、状態とプレイヤー色のみリセットして再スタート
                 if (timeStopCoroutine != null)
                 {
                     StopCoroutine(timeStopCoroutine);
-                    // プレイヤーの色のみをリセット
                     if (playerRenderer != null) playerRenderer.color = originalPlayerColor;
+                    // ★ 修正：TimeStopStatusTextもリセット ★
+                    if (timeStopStatusText != null) timeStopStatusText.text = "";
                     isFullnessDrainStopped = false;
                     isFullnessChangeStopped = false;
                 }
@@ -238,23 +244,21 @@ public class GameDirector : MonoBehaviour
                 return true;
 
             case "Boost":
-                // 既にBoostが動いているなら停止し、状態と背景色のみリセットして再スタート
                 if (boostCoroutine != null)
                 {
                     StopCoroutine(boostCoroutine);
-                    // 背景色のみをリセット
                     if (mainCamera != null) mainCamera.backgroundColor = originalCameraColor;
+                    // ★ 修正：BoostStatusTextもリセット ★
+                    if (boostStatusText != null) boostStatusText.text = "";
                     isBoostActive = false;
                 }
                 boostCoroutine = StartCoroutine(BoostEffect(boostDuration));
                 return true;
 
             case "MaxOut":
-                // MaxOutは全てを停止し、即ゲームオーバー
                 if (timeStopCoroutine != null) StopCoroutine(timeStopCoroutine);
                 if (boostCoroutine != null) StopCoroutine(boostCoroutine);
 
-                // 全ての状態と視覚効果をリセット
                 ResetVisualEffects();
                 isFullnessDrainStopped = false;
                 isFullnessChangeStopped = false;
@@ -272,30 +276,31 @@ public class GameDirector : MonoBehaviour
     {
         Debug.Log($"特殊効果: TimeStop (満腹ゲージ変動停止) {duration}秒開始");
 
-        // プレイヤーの参照を再チェック/再取得
         if (playerRenderer == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
             if (playerObject != null) playerRenderer = playerObject.GetComponent<SpriteRenderer>();
         }
 
-        // 状態変更
         isFullnessDrainStopped = true;
         isFullnessChangeStopped = true;
 
-        // プレイヤーを緑色にする
         if (playerRenderer != null) playerRenderer.color = Color.green;
+
+        // ★ 修正：timeStopStatusText のみを使用 ★
+        if (timeStopStatusText != null) timeStopStatusText.text = "満腹ゲージロック中！";
 
         yield return new WaitForSeconds(duration);
 
-        // 状態リセット
         isFullnessDrainStopped = false;
         isFullnessChangeStopped = false;
 
-        // ★ 終了時、プレイヤーの色のみをリセット (背景色はBoostが担当) ★
         if (playerRenderer != null) playerRenderer.color = originalPlayerColor;
 
-        timeStopCoroutine = null; // コルーチン変数をクリア
+        // ★ 修正：TimeStopStatusTextのみをクリア ★
+        if (timeStopStatusText != null) timeStopStatusText.text = "";
+
+        timeStopCoroutine = null;
         Debug.Log("特殊効果: TimeStop 終了");
     }
 
@@ -303,27 +308,28 @@ public class GameDirector : MonoBehaviour
     {
         Debug.Log($"特殊効果: Boost (効果中、満腹度とスコア増加) {duration}秒開始");
 
-        // カメラの参照を再チェック/再取得
         if (mainCamera == null) mainCamera = Camera.main;
 
-        // 状態変更
         isBoostActive = true;
 
-        // 背景をオレンジ色にする
         if (mainCamera != null)
         {
             mainCamera.backgroundColor = Color.Lerp(originalCameraColor, Color.yellow, 0.7f);
         }
 
+        // ★ 修正：boostStatusText のみを使用 ★
+        if (boostStatusText != null) boostStatusText.text = "ブースト中！";
+
         yield return new WaitForSeconds(duration);
 
-        // 状態リセット
         isBoostActive = false;
 
-        // ★ 終了時、背景色のみをリセット (プレイヤーはTimeStopが担当) ★
         if (mainCamera != null) mainCamera.backgroundColor = originalCameraColor;
 
-        boostCoroutine = null; // コルーチン変数をクリア
+        // ★ 修正：BoostStatusTextのみをクリア ★
+        if (boostStatusText != null) boostStatusText.text = "";
+
+        boostCoroutine = null;
         Debug.Log("特殊効果: Boost 終了");
     }
 
@@ -348,9 +354,6 @@ public class GameDirector : MonoBehaviour
     }
 
     // --- 視覚効果リセットヘルパーメソッド ---
-    /// <summary>
-    /// 全ての視覚効果をリセットする（主にMaxOut時やシーンリセット時に使用）
-    /// </summary>
     private void ResetVisualEffects()
     {
         if (mainCamera != null)
@@ -362,6 +365,10 @@ public class GameDirector : MonoBehaviour
         {
             playerRenderer.color = originalPlayerColor;
         }
+
+        // ★ 修正：両方のテキストをリセット ★
+        if (boostStatusText != null) boostStatusText.text = "";
+        if (timeStopStatusText != null) timeStopStatusText.text = "";
     }
     // -------------------------------------
 

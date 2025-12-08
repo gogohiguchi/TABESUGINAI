@@ -17,4 +17,4 @@ MonoBehaviour:
   scoreValue: 500
   whatspecialItem: TimeStop
   prefab: {fileID: 8016918283728963868, guid: 3794da5f36b605349b8df546e894aebc, type: 3}
-  dropWeight: 1.145142e+12
+  dropWeight: 5

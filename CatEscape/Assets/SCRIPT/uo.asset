@@ -17,4 +17,4 @@ MonoBehaviour:
   scoreValue: 500
   whatspecialItem: Boost
   prefab: {fileID: 8016918283728963868, guid: d774d262845c90d4a81c81bc006d61d3, type: 3}
-  dropWeight: 1.145142e+12
+  dropWeight: 5
