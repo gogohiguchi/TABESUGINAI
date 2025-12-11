@@ -17,4 +17,4 @@ MonoBehaviour:
   scoreValue: 0
   whatspecialItem: MaxOut
   prefab: {fileID: 8016918283728963868, guid: 84436db542fbbf448a68ca7691242cb5, type: 3}
-  dropWeight: 0.1
+  dropWeight: 0.3
