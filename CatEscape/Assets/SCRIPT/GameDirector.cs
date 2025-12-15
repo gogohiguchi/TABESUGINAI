@@ -12,12 +12,14 @@ public class GameDirector : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI fullnessValueText;
 
-    // ★ 修正：ブースト用とストップ用で個別にTextを管理 ★
     public TextMeshProUGUI boostStatusText;
     public TextMeshProUGUI timeStopStatusText;
 
     public float score = 0;
     public bool isGameOver = false;
+
+    // ★ 追加：ゲームロジックの実行制御フラグ ★
+    public bool isProcessing = true;
 
     // 視覚効果用の変数
     [Header("視覚効果")]
@@ -75,16 +77,15 @@ public class GameDirector : MonoBehaviour
         isFullnessChangeStopped = false;
         isBoostActive = false;
 
-        if (fullnessGauge != null)
-        {
-            this.fullnessGauge.GetComponent<Image>().fillAmount = 0.0f;
-        }
+        // Start() 時点ではUIはまだ存在しないため、ここでは実行しない
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "GameScene")
         {
+            // GameSceneに戻ったとき、処理を再開し、状態をリセットする
+            isProcessing = true; // ★ 処理再開 ★
             score = 0;
             currentFullness = initialFullness;
             isGameOver = false;
@@ -95,7 +96,7 @@ public class GameDirector : MonoBehaviour
             timeStopCoroutine = null;
             boostCoroutine = null;
 
-            // UIの参照を取得
+            // UIの参照を取得 (GameObject.Findは時間差で失敗する可能性があるため、MenuManagerからシーン遷移する場合は注意が必要ですが、ここではそのまま実装)
             fullnessGauge = GameObject.Find("FullnessGauge")?.gameObject;
             scoreText = GameObject.Find("ScoreText")?.GetComponent<TextMeshProUGUI>();
 
@@ -109,13 +110,11 @@ public class GameDirector : MonoBehaviour
                 Debug.LogError("UI Error: 'FullnessValueText' がシーンで見つかりませんでした。");
             }
 
-            // ★ 修正：Boost用とTimeStop用のテキスト参照を取得し、初期化 ★
             boostStatusText = GameObject.Find("BoostStatusText")?.GetComponent<TextMeshProUGUI>();
             timeStopStatusText = GameObject.Find("TimeStopStatusText")?.GetComponent<TextMeshProUGUI>();
 
             if (boostStatusText != null) boostStatusText.text = "";
             if (timeStopStatusText != null) timeStopStatusText.text = "";
-            // --------------------------------------------------------
 
             // 視覚効果用の参照を取得し、元の色を保存 (リセット) 
             mainCamera = Camera.main;
@@ -143,11 +142,16 @@ public class GameDirector : MonoBehaviour
                 Debug.LogWarning("満腹ゲージ (FullnessGauge) がシーン 'GameScene' で見つかりませんでした。");
             }
         }
+        else
+        {
+            // GameSceneではないシーン（タイトル、チュートリアルなど）に移動した場合
+            isProcessing = false; // ★ 処理を停止 ★
+        }
     }
 
     public void EatFood(float fullnessValue, int scoreValue, string specialType)
     {
-        if (isGameOver) return;
+        if (isGameOver || !isProcessing) return; // ★ isProcessingチェックを追加 ★
 
         if (isFullnessChangeStopped && specialType != "TimeStop")
         {
@@ -235,7 +239,6 @@ public class GameDirector : MonoBehaviour
                 {
                     StopCoroutine(timeStopCoroutine);
                     if (playerRenderer != null) playerRenderer.color = originalPlayerColor;
-                    // ★ 修正：TimeStopStatusTextもリセット ★
                     if (timeStopStatusText != null) timeStopStatusText.text = "";
                     isFullnessDrainStopped = false;
                     isFullnessChangeStopped = false;
@@ -248,7 +251,6 @@ public class GameDirector : MonoBehaviour
                 {
                     StopCoroutine(boostCoroutine);
                     if (mainCamera != null) mainCamera.backgroundColor = originalCameraColor;
-                    // ★ 修正：BoostStatusTextもリセット ★
                     if (boostStatusText != null) boostStatusText.text = "";
                     isBoostActive = false;
                 }
@@ -287,7 +289,6 @@ public class GameDirector : MonoBehaviour
 
         if (playerRenderer != null) playerRenderer.color = Color.green;
 
-        // ★ 修正：timeStopStatusText のみを使用 ★
         if (timeStopStatusText != null) timeStopStatusText.text = "満腹ゲージロック中！";
 
         yield return new WaitForSeconds(duration);
@@ -297,7 +298,6 @@ public class GameDirector : MonoBehaviour
 
         if (playerRenderer != null) playerRenderer.color = originalPlayerColor;
 
-        // ★ 修正：TimeStopStatusTextのみをクリア ★
         if (timeStopStatusText != null) timeStopStatusText.text = "";
 
         timeStopCoroutine = null;
@@ -317,7 +317,6 @@ public class GameDirector : MonoBehaviour
             mainCamera.backgroundColor = Color.Lerp(originalCameraColor, Color.yellow, 0.7f);
         }
 
-        // ★ 修正：boostStatusText のみを使用 ★
         if (boostStatusText != null) boostStatusText.text = "ブースト中！";
 
         yield return new WaitForSeconds(duration);
@@ -326,7 +325,6 @@ public class GameDirector : MonoBehaviour
 
         if (mainCamera != null) mainCamera.backgroundColor = originalCameraColor;
 
-        // ★ 修正：BoostStatusTextのみをクリア ★
         if (boostStatusText != null) boostStatusText.text = "";
 
         boostCoroutine = null;
@@ -366,7 +364,6 @@ public class GameDirector : MonoBehaviour
             playerRenderer.color = originalPlayerColor;
         }
 
-        // ★ 修正：両方のテキストをリセット ★
         if (boostStatusText != null) boostStatusText.text = "";
         if (timeStopStatusText != null) timeStopStatusText.text = "";
     }
@@ -409,7 +406,8 @@ public class GameDirector : MonoBehaviour
     // --- Update ---
     void Update()
     {
-        if (isGameOver) return;
+        // ★ 修正：isProcessing または isGameOver の場合は即座にリターン ★
+        if (isGameOver || !isProcessing) return;
 
         // 1. 左右キーによる満腹度減少 (操作コスト)
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
